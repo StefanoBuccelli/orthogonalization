@@ -1,0 +1,186 @@
+clear
+clc
+%% Trying to replicate supplementary figures from hipp (simulation) 
+
+% we generated complex random numbers with Rayleigh distributed amplitude and random phase
+% As a model of frequency transformed physiological
+% signals, we generated complex random numbers with Rayleigh distributed amplitude and
+% random phase. This corresponds to the frequency transform of Gaussian noise in the timedomain. Although this signal model is very general, the conclusions drawn from the present
+% simulations are limited to this model. 
+
+% param
+rng(10)
+signal_len=1e4;
+B=1; % Rayleigh parameter
+x = raylrnd(B,1,signal_len) +1i*raylrnd(B,1,signal_len);
+x_2 = raylrnd(B,1,signal_len) +1i*raylrnd(B,1,signal_len);
+range_coherence=0:.01:1;
+%% initialize variables
+y=zeros(length(range_coherence),signal_len);
+x_power=zeros(length(range_coherence),signal_len);
+x_2_power=zeros(length(range_coherence),signal_len);
+y_power=zeros(length(range_coherence),signal_len);
+y_ort_x=zeros(length(range_coherence),signal_len);
+x_ort_y=zeros(length(range_coherence),signal_len);
+y_ort_x_power=zeros(length(range_coherence),signal_len);
+x_ort_y_power=zeros(length(range_coherence),signal_len);
+
+rho_all_plain=zeros(length(range_coherence),1);
+rho_all_ort=zeros(length(range_coherence),1);
+rho_all_x_x_ort_y=zeros(length(range_coherence),1);
+rho_all_x_y_ort_x=zeros(length(range_coherence),1);
+rho_all_y_x_ort_y=zeros(length(range_coherence),1);
+rho_all_y_y_ort_x=zeros(length(range_coherence),1);
+rho_all_x2_x_ort_y=zeros(length(range_coherence),1);
+rho_all_x2_y_ort_x=zeros(length(range_coherence),1);
+
+%% cycle over different values of choerence
+curr_step=1;
+for curr_c=range_coherence
+    c = curr_c;
+    % signals
+    y(curr_step,:) = c.*x + sqrt(1 - c^2).*x_2;
+    % power
+    x_power(curr_step,:)=abs(x).^2;
+    x_2_power(curr_step,:)=abs(x_2).^2;
+    y_power(curr_step,:)=abs(y(curr_step,:)).^2;
+    
+    %% plain
+    rho_plain=corrcoef(x_power(curr_step,:),y_power(curr_step,:));
+    rho_all_plain(curr_step)=rho_plain(1,2);
+    
+    %% orthogonalization
+    y_ort_x(curr_step,:)=y(curr_step,:)-real(x.*conj(y(curr_step,:))./(abs(x).^2)).*x; %from hipp
+    x_ort_y(curr_step,:)=x-real(y(curr_step,:).*conj(x)./(abs(y(curr_step,:)).^2)).*y(curr_step,:); %from hipp
+    
+    y_ort_x_power(curr_step,:)=abs(y_ort_x(curr_step,:)).^2;
+    x_ort_y_power(curr_step,:)=abs(x_ort_y(curr_step,:)).^2;
+    %% orthog corr ortog
+    rho_ort=corrcoef(x_ort_y_power(curr_step,:),y_ort_x_power(curr_step,:));
+    rho_all_ort(curr_step)=rho_ort(1,2);
+   
+    %% x corr x ortog y
+    rho_x_x_ort_y=corrcoef(x_power(curr_step,:),x_ort_y_power(curr_step,:));
+    rho_all_x_x_ort_y(curr_step)=rho_x_x_ort_y(1,2);
+   
+    %% x corr y ortog x
+    rho_x_y_ort_x=corrcoef(x_power(curr_step,:),y_ort_x_power(curr_step,:));
+    rho_all_x_y_ort_x(curr_step)=rho_x_y_ort_x(1,2);
+    
+    %% y corr x ortog y
+    rho_y_x_ort_y=corrcoef(y_power(curr_step,:),x_ort_y_power(curr_step,:));
+    rho_all_y_x_ort_y(curr_step)=rho_y_x_ort_y(1,2);
+    
+    %% y corr y ortog x
+    rho_y_y_ort_x=corrcoef(y_power(curr_step,:),y_ort_x_power(curr_step,:));
+    rho_all_y_y_ort_x(curr_step)=rho_y_y_ort_x(1,2);
+   
+    %% x_2 corr x ortog y
+    rho_x2_x_ort_y=corrcoef(x_2_power(curr_step,:),x_ort_y_power(curr_step,:));
+    rho_all_x2_x_ort_y(curr_step)=rho_x2_x_ort_y(1,2);
+    
+    %% x_2 corr y ortog x
+    rho_x2_y_ort_x=corrcoef(x_2_power(curr_step,:),y_ort_x_power(curr_step,:));
+    rho_all_x2_y_ort_x(curr_step)=rho_x2_y_ort_x(1,2);
+    
+    curr_step=curr_step+1;
+end
+
+%% figure to compare the different correlations
+figure
+h_s(1)=subplot(1,4,1);
+plot(range_coherence,rho_all_plain,'k.')
+hold on
+plot(range_coherence,rho_all_ort,'m.')
+legend({'plain','ort ort'},'interpreter','none')
+xlabel('coherence')
+ylabel('correlation coeff')
+
+h_s(2)=subplot(1,4,2);
+plot(range_coherence,rho_all_plain,'k.')
+hold on
+plot(range_coherence,rho_all_x_x_ort_y,'bo')
+plot(range_coherence,rho_all_x_y_ort_x,'b.')
+legend({'plain','x_x_ort_y','x_y_ort_x'},'interpreter','none')
+xlabel('coherence')
+ylabel('correlation coeff')
+
+h_s(3)=subplot(1,4,3);
+plot(range_coherence,rho_all_plain,'k.')
+hold on
+plot(range_coherence,rho_all_x2_x_ort_y,'go')
+plot(range_coherence,rho_all_x2_y_ort_x,'g.')
+legend({'plain','x2_x_ort_y','x2_y_ort_x'},'interpreter','none')
+xlabel('coherence')
+ylabel('correlation coeff')
+
+h_s(4)=subplot(1,4,4);
+plot(range_coherence,rho_all_plain,'k.')
+hold on
+plot(range_coherence,rho_all_y_x_ort_y,'ro')
+plot(range_coherence,rho_all_y_y_ort_x,'r.')
+legend({'plain','y_x_ort_y','y_y_ort_x'},'interpreter','none')
+xlabel('coherence')
+ylabel('correlation coeff')
+
+linkaxes(h_s,'xy')
+xlim([-.1 1.1])
+ylim([-.1 1.1])
+xlabel('coherence')
+ylabel('correlation coeff')
+
+%% comparing phases
+x_phases=angle(x).*180/pi;
+x_2_phases=angle(x_2).*180/pi;
+y_phases=angle(y).*180/pi;
+y_ort_x_phases=angle(y_ort_x).*180/pi;
+x_ort_y_phases=angle(x_ort_y).*180/pi; 
+
+figure
+subplot(1,3,1)
+imagesc(abs(x_phases-x_2_phases))
+title('diff abs(x - x2) phases')
+subplot(1,3,2)
+imagesc(abs(x_phases-y_ort_x_phases))
+title('diff abs(x - y ort x) phases')
+subplot(1,3,3)
+imagesc(abs(y_phases-x_ort_y_phases))
+title('diff abs(y - x ort y) phases')
+
+%% check different phases
+curr_step=1; % curr step for coherence level to show
+figure
+h(1)=subplot(1,3,1);
+histogram(x_phases*180/pi,'normalization','probability')
+xlabel('x phase distribution [deg]')
+ylabel('probability')
+title('x phase histogram [deg]')
+h(2)=subplot(1,3,2);
+histogram(x_2_phases*180/pi,'normalization','probability')
+xlabel('x phase distribution [deg]')
+ylabel('probability')
+title('x2 phase histogram [deg]')
+h(3)=subplot(1,3,3);
+histogram(y_phases(curr_step,:)*180/pi,'normalization','probability')
+xlabel('x phase distribution [deg]')
+ylabel('probability')
+title(['y (' num2str(curr_step) ') phase histogram [deg]'])
+linkaxes(h,'xy')
+%% comparing signal abs at specific levels of coherence
+curr_step=50;
+figure
+h(1)=subplot(2,1,1);
+plot(sqrt(x_power(curr_step,:)),'m')
+hold on
+plot(real(x),'b')
+legend({'abs(x)','real(x)'},'interpreter','none')
+title('comparing x signal and abs')
+h(2)=subplot(2,1,2);
+plot(sqrt(y_power(curr_step,:)),'m')
+hold on
+plot(real(y(curr_step,:)),'r')
+legend({'abs(y)','real(y)'},'interpreter','none')
+title(['comparing y signal and abs in curr step = ' num2str(curr_step)])
+linkaxes(h,'x')
+
+
