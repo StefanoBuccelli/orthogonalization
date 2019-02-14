@@ -1,5 +1,6 @@
 clear
 clc
+
 %% Trying to replicate supplementary figures from hipp (simulation) 
 
 % we generated complex random numbers with Rayleigh distributed amplitude and random phase
@@ -13,7 +14,7 @@ rng(10)
 signal_len=1e4;
 B=1; % Rayleigh parameter
 x = raylrnd(B,1,signal_len) +1i*raylrnd(B,1,signal_len);
-x_2 = raylrnd(B,1,signal_len) +1i*raylrnd(B,1,signal_len);
+x_2 = raylrnd(B+1,1,signal_len) +1i*raylrnd(B+1,1,signal_len);
 range_coherence=0:.01:1;
 %% initialize variables
 y=zeros(length(range_coherence),signal_len);
@@ -184,3 +185,15 @@ title(['comparing y signal and abs in curr step = ' num2str(curr_step)])
 linkaxes(h,'x')
 
 
+%% compass plot
+figure
+for curr_sample=1:10
+    subplot(2,5,curr_sample)
+    for curr_cohere_inx=1:101
+        compass(real(y(curr_cohere_inx,curr_sample)),imag(y(curr_cohere_inx,curr_sample)),'r')
+        hold on
+    end
+    compass(real(x(curr_sample)),imag(x(curr_sample)),'b')
+    compass(real(x_2(curr_sample)),imag(x_2(curr_sample)),'g')
+    title(num2str(curr_sample))
+end
