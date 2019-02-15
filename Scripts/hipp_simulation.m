@@ -11,20 +11,48 @@ close all
 
 % param
 
-signal_len=1e4;
-for B=0.01:.01:200 % Rayleigh parameter (equal to the std of the two original gauss distributions)
+signal_len=1e3;
+for B=10 % Rayleigh parameter (equal to the std of the two original gauss distributions)
 
 %%
 % x = raylrnd(B,1,signal_len) +1i*raylrnd(B,1,signal_len);
 % x_2 = raylrnd(B+1,1,signal_len) +1i*raylrnd(B+1,1,signal_len);
-% x = raylrnd(B,1,signal_len) +1i*randn(1,signal_len);
-% x_2 = randn(1,signal_len) +1i*randn(1,signal_len);
+rng(1)
+x = raylrnd(B,1,signal_len).*exp(1i.*randn(1,signal_len));
+x_2 = raylrnd(B,1,signal_len).*exp(1i.*randn(1,signal_len));
+% x = raylrnd(B,1,signal_len).*exp(1i.*raylrnd(B,1,signal_len));
+% x_2 = raylrnd(B,1,signal_len).*exp(1i.*raylrnd(B,1,signal_len));
 rng(10)
-x = raylrnd(B,1,signal_len).*exp(1i.*randn(1,signal_len).*3);
-x=x-mean(x);
-x_2 = randn(1,signal_len).*exp(1i.*randn(1,signal_len).*3);
-x_2=x_2-mean(x_2);
+ampiezza=raylrnd(B,1,signal_len);
+rng(12)
+fase_1=randn(1,signal_len)*10;
+rng(15)
+fase_2=randn(1,signal_len)*10;
+% x=ampiezza.*exp(1i.*fase_1);
+% x_2=ampiezza.*exp(1i.*(fase_2));
+% x = 1.*raylrnd(B,1,signal_len).*exp(1i.*randn(1,signal_len)*10);
+% x_2 = 1.*raylrnd(B,1,signal_len).*exp(1i.*randn(1,signal_len)*10);
+% rng(12)
+% x_2 = .5.*raylrnd(B,1,signal_len).*exp(1i.*randn(1,signal_len)*10);
+% x=x./max(x); % normalization
+% x_2=x_2./max(x_2); % normalization
 
+%% histogram of x and x_2 amplitudes and phases
+figure
+h_x(1)=subplot(2,2,1);
+histogram(real(x))
+title('x amplitude')
+h_x(1)=subplot(2,2,2);
+histogram(angle(x))
+title('x phase')
+h_x(1)=subplot(2,2,3);
+histogram(real(x_2))
+title('x2 amplitude')
+h_x(1)=subplot(2,2,4);
+histogram(angle(x_2))
+title('x2 phase')
+
+%%
 range_coherence=0:.01:1;
 
 %% initialize variables
@@ -51,19 +79,20 @@ curr_step=1;
 for curr_c=range_coherence
     c = curr_c;
     % signals
-    y(curr_step,:) = c.*x + sqrt(1 - c^2).*x_2;
+     y(curr_step,:) = (c.*x) + (sqrt((1 - c^2)).*x_2);
+%     y(curr_step,:) = (c.*real(x)+1i.*imag(x)) + (sqrt((1 - c^2)).*real(x_2)+1i.*(imag(x_2)));
     % power
     x_power(curr_step,:)=abs(x).^2;
     x_2_power(curr_step,:)=abs(x_2).^2;
     y_power(curr_step,:)=abs(y(curr_step,:)).^2;
     
-    x_power(curr_step,:)=log10(x_power(curr_step,:));
-    x_2_power(curr_step,:)=log10(x_2_power(curr_step,:));
-    y_power(curr_step,:)=log10(y_power(curr_step,:));
+%     x_power(curr_step,:)=log10(x_power(curr_step,:));
+%     x_2_power(curr_step,:)=log10(x_2_power(curr_step,:));
+%     y_power(curr_step,:)=log10(y_power(curr_step,:));
     %% plain
     rho_plain=corrcoef(x_power(curr_step,:),y_power(curr_step,:));
     rho_all_plain(curr_step)=rho_plain(1,2);
-     
+
     %% orthogonalization
     y_ort_x(curr_step,:)=y(curr_step,:)-real(x.*conj(y(curr_step,:))./(abs(x).^2)).*x; %from hipp
     x_ort_y(curr_step,:)=x-real(y(curr_step,:).*conj(x)./(abs(y(curr_step,:)).^2)).*y(curr_step,:); %from hipp
@@ -71,8 +100,8 @@ for curr_c=range_coherence
     y_ort_x_power(curr_step,:)=abs(y_ort_x(curr_step,:)).^2;
     x_ort_y_power(curr_step,:)=abs(x_ort_y(curr_step,:)).^2;
     
-    y_ort_x_power(curr_step,:)=log10(y_ort_x_power(curr_step,:));
-    x_ort_y_power(curr_step,:)=log10(x_ort_y_power(curr_step,:));
+%     y_ort_x_power(curr_step,:)=log10(y_ort_x_power(curr_step,:));
+%     x_ort_y_power(curr_step,:)=log10(x_ort_y_power(curr_step,:));
     %% orthog corr ortog
     rho_ort=corrcoef(x_ort_y_power(curr_step,:),y_ort_x_power(curr_step,:));
     rho_all_ort(curr_step)=rho_ort(1,2);
@@ -103,12 +132,17 @@ for curr_c=range_coherence
 
     curr_step=curr_step+1;
 end
-
+%%
 ort_hipp=(atanh(rho_all_x_y_ort_x)./2+atanh(rho_all_y_x_ort_y)./2);
 ort_hipp_no_atan=((rho_all_x_y_ort_x)./2+(rho_all_y_x_ort_y)./2);
-figure(1)
+figure
 plot(range_coherence,ort_hipp)
 hold on
+plot(range_coherence,ort_hipp_no_atan)
+hold on
+plot(range_coherence,rho_all_plain,'k')
+axis square
+title('comparison rho (ort hipp) vs rho plain ')
 end
 %% figure to compare the different correlations
 figure
@@ -212,9 +246,11 @@ linkaxes(h,'x')
 figure
 for curr_sample=1:10
     subplot(2,5,curr_sample)
-    for curr_cohere_inx=1:101
-        compass(real(y(curr_cohere_inx,curr_sample)),imag(y(curr_cohere_inx,curr_sample)),'r')
+    for curr_cohere_inx=1:10:101
+        compass(real(y(curr_cohere_inx,curr_sample)),imag(y(curr_cohere_inx,curr_sample)),'r')       
         hold on
+        compass(real(y_ort_x(curr_cohere_inx,curr_sample)),imag(y_ort_x(curr_cohere_inx,curr_sample)),'k')
+        compass(real(x_ort_y(curr_cohere_inx,curr_sample)),imag(x_ort_y(curr_cohere_inx,curr_sample)),'m')
     end
     compass(real(x(curr_sample)),imag(x(curr_sample)),'b')
     compass(real(x_2(curr_sample)),imag(x_2(curr_sample)),'g')
