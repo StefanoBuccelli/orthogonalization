@@ -10,20 +10,17 @@ close all
 % simulations are limited to this model. 
 
 % param
-
+rng(10)
 signal_len=1e4;
-for B=0.01:.01:200 % Rayleigh parameter (equal to the std of the two original gauss distributions)
+B=.2; % Rayleigh parameter (equal to the std of the two original gauss distributions)
 
 %%
 % x = raylrnd(B,1,signal_len) +1i*raylrnd(B,1,signal_len);
 % x_2 = raylrnd(B+1,1,signal_len) +1i*raylrnd(B+1,1,signal_len);
 % x = raylrnd(B,1,signal_len) +1i*randn(1,signal_len);
 % x_2 = randn(1,signal_len) +1i*randn(1,signal_len);
-rng(10)
-x = raylrnd(B,1,signal_len).*exp(1i.*randn(1,signal_len).*3);
-x=x-mean(x);
-x_2 = randn(1,signal_len).*exp(1i.*randn(1,signal_len).*3);
-x_2=x_2-mean(x_2);
+x = raylrnd(B,1,signal_len).*exp(1i.*randn(1,signal_len));
+x_2 = raylrnd(B,1,signal_len).*exp(1i.*randn(1,signal_len));
 
 range_coherence=0:.01:1;
 
@@ -70,7 +67,6 @@ for curr_c=range_coherence
     
     y_ort_x_power(curr_step,:)=abs(y_ort_x(curr_step,:)).^2;
     x_ort_y_power(curr_step,:)=abs(x_ort_y(curr_step,:)).^2;
-    
     y_ort_x_power(curr_step,:)=log10(y_ort_x_power(curr_step,:));
     x_ort_y_power(curr_step,:)=log10(x_ort_y_power(curr_step,:));
     %% orthog corr ortog
@@ -106,10 +102,9 @@ end
 
 ort_hipp=(atanh(rho_all_x_y_ort_x)./2+atanh(rho_all_y_x_ort_y)./2);
 ort_hipp_no_atan=((rho_all_x_y_ort_x)./2+(rho_all_y_x_ort_y)./2);
-figure(1)
-plot(range_coherence,ort_hipp)
-hold on
-end
+figure
+plot(ort_hipp,ort_hipp_no_atan)
+
 %% figure to compare the different correlations
 figure
 h_s(1)=subplot(1,4,1);
