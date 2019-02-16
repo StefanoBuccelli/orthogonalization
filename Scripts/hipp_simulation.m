@@ -3,17 +3,9 @@ clc
 close all
 %% Trying to replicate supplementary figures from hipp (simulation) 
 
-% we generated complex random numbers with Rayleigh distributed amplitude and random phase
-% As a model of frequency transformed physiological
-% signals, we generated complex random numbers with Rayleigh distributed amplitude and
-% random phase. This corresponds to the frequency transform of Gaussian noise in the timedomain. Although this signal model is very general, the conclusions drawn from the present
-% simulations are limited to this model. 
+signal_len=1e4; % samples
 
-% param
-
-signal_len=1e4;
 for B=2 % Rayleigh parameter (equal to the std of the two original gauss distributions)
-
 %%
 % x = raylrnd(B,1,signal_len) +1i*raylrnd(B,1,signal_len);
 % x_2 = raylrnd(B+1,1,signal_len) +1i*raylrnd(B+1,1,signal_len);
@@ -123,6 +115,7 @@ for curr_c=range_coherence
     y_ort_x2_power(curr_step,:)=log10(y_ort_x2_power(curr_step,:));
     x2_ort_y_power(curr_step,:)=log10(x2_ort_y_power(curr_step,:));
     
+    %% orthog x2-y
     rho_all_x2_y_ort_x2(curr_step)=corr(y_ort_x2_power(curr_step,:)',x_2_power(curr_step,:)');
     
     rho_all_y_x2_ort_y(curr_step)=corr(x2_ort_y_power(curr_step,:)',y_power(curr_step,:)');
@@ -130,30 +123,28 @@ for curr_c=range_coherence
     
     %% orthog corr ortog
     rho_all_ort(curr_step)=corr(x_ort_y_power(curr_step,:)',y_ort_x_power(curr_step,:)');
-    
     %% x corr x ortog y
     rho_all_x_x_ort_y(curr_step)=corr(x_power(curr_step,:)',x_ort_y_power(curr_step,:)');
-   
     %% x corr y ortog x
     rho_all_x_y_ort_x(curr_step)=corr(x_power(curr_step,:)',y_ort_x_power(curr_step,:)');
-    
     %% y corr x ortog y
     rho_all_y_x_ort_y(curr_step)=corr(y_power(curr_step,:)',x_ort_y_power(curr_step,:)');
-    
     %% y corr y ortog x
     rho_all_y_y_ort_x(curr_step)=corr(y_power(curr_step,:)',y_ort_x_power(curr_step,:)');
-   
     %% x_2 corr x ortog y
     rho_all_x2_x_ort_y(curr_step)=corr(x_2_power(curr_step,:)',x_ort_y_power(curr_step,:)');
-    
     %% x_2 corr y ortog x
     rho_all_x2_y_ort_x(curr_step)=corr(x_2_power(curr_step,:)',y_ort_x_power(curr_step,:)');
 
     curr_step=curr_step+1;
 end
-%%
-ort_hipp=(atanh(rho_all_x_y_ort_x)./2+atanh(rho_all_y_x_ort_y)./2);
+
+%% evaluate correlation with the orthogonalized 
+ort_hipp=(atanh(rho_all_x_y_ort_x)./2+atanh(rho_all_y_x_ort_y)./2); %x - y
 ort_hipp_no_atan=((rho_all_x_y_ort_x)./2+(rho_all_y_x_ort_y)./2);
+
+ort_hipp_no_atan_x2=-((rho_all_y_x2_ort_y)./2+(rho_all_x2_y_ort_x2)./2); % x_2 - y
+
 figure
 subplot(2,1,1)
 plot(range_coherence,ort_hipp)
@@ -161,14 +152,24 @@ hold on
 plot(range_coherence,ort_hipp_no_atan)
 hold on
 plot(range_coherence,rho_all_plain,'k')
+plot(range_coherence,ort_hipp_no_atan_x2,'g')
 title(['rho (ort hipp) vs rho plain ' num2str(B)])
+legend({'hipp atanh y-x','hipp no atanh y-x','plain','hipp no atanh -(y-x2)'})
+xlabel('coherence')
+ylabel('correlation')
+ylim([-1 1])
+
 subplot(2,1,2)
-plot(rho_all_plain,ort_hipp_no_atan,'k')
-m=mean(diff(ort_hipp_no_atan(1:7))./diff(rho_all_plain(1:7)))
+plot(range_coherence,ort_hipp_no_atan,'k')
 title('rho all plain - rho ort hipp')
-ort_hipp_no_atan_x2=-((rho_all_y_x2_ort_y)./2+(rho_all_x2_y_ort_x2)./2);
 hold on
 plot(rho_all_plain,ort_hipp_no_atan_x2,'g')
+xlabel('correlation')
+ylabel('corr orth')
+legend({'y - x','-(y -x2)'})
+ylim([-1 1])
+
+m=mean(diff(ort_hipp_no_atan(1:9))./diff(rho_all_plain(1:9)))
 m_2=mean(diff(ort_hipp_no_atan_x2(14:21))./diff(rho_all_plain(14:21))')
 end
 
