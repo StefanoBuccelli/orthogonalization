@@ -123,37 +123,31 @@ for curr_c=range_coherence
     y_ort_x2_power(curr_step,:)=log10(y_ort_x2_power(curr_step,:));
     x2_ort_y_power(curr_step,:)=log10(x2_ort_y_power(curr_step,:));
     
-    rho_x2_y_ort_x2=corrcoef(y_ort_x2_power(curr_step,:),x_2_power(curr_step,:));
-    rho_all_x2_y_ort_x2(curr_step)=rho_x2_y_ort_x2(1,2);
-    rho_y_x2_ort_y=corrcoef(x2_ort_y_power(curr_step,:),y_power(curr_step,:));
-    rho_all_y_x2_ort_y(curr_step)=rho_y_x2_ort_y(1,2);
+    rho_all_x2_y_ort_x2(curr_step)=corr(y_ort_x2_power(curr_step,:)',x_2_power(curr_step,:)');
+    
+    rho_all_y_x2_ort_y(curr_step)=corr(x2_ort_y_power(curr_step,:)',y_power(curr_step,:)');
+    
+    
     %% orthog corr ortog
-    rho_ort=corrcoef(x_ort_y_power(curr_step,:),y_ort_x_power(curr_step,:));
-    rho_all_ort(curr_step)=rho_ort(1,2);
+    rho_all_ort(curr_step)=corr(x_ort_y_power(curr_step,:)',y_ort_x_power(curr_step,:)');
     
     %% x corr x ortog y
-    rho_x_x_ort_y=corrcoef(x_power(curr_step,:),x_ort_y_power(curr_step,:));
-    rho_all_x_x_ort_y(curr_step)=rho_x_x_ort_y(1,2);
+    rho_all_x_x_ort_y(curr_step)=corr(x_power(curr_step,:)',x_ort_y_power(curr_step,:)');
    
     %% x corr y ortog x
-    rho_x_y_ort_x=corrcoef(x_power(curr_step,:),y_ort_x_power(curr_step,:));
-    rho_all_x_y_ort_x(curr_step)=rho_x_y_ort_x(1,2);
+    rho_all_x_y_ort_x(curr_step)=corr(x_power(curr_step,:)',y_ort_x_power(curr_step,:)');
     
     %% y corr x ortog y
-    rho_y_x_ort_y=corrcoef(y_power(curr_step,:),x_ort_y_power(curr_step,:));
-    rho_all_y_x_ort_y(curr_step)=rho_y_x_ort_y(1,2);
+    rho_all_y_x_ort_y(curr_step)=corr(y_power(curr_step,:)',x_ort_y_power(curr_step,:)');
     
     %% y corr y ortog x
-    rho_y_y_ort_x=corrcoef(y_power(curr_step,:),y_ort_x_power(curr_step,:));
-    rho_all_y_y_ort_x(curr_step)=rho_y_y_ort_x(1,2);
+    rho_all_y_y_ort_x(curr_step)=corr(y_power(curr_step,:)',y_ort_x_power(curr_step,:)');
    
     %% x_2 corr x ortog y
-    rho_x2_x_ort_y=corrcoef(x_2_power(curr_step,:),x_ort_y_power(curr_step,:));
-    rho_all_x2_x_ort_y(curr_step)=rho_x2_x_ort_y(1,2);
+    rho_all_x2_x_ort_y(curr_step)=corr(x_2_power(curr_step,:)',x_ort_y_power(curr_step,:)');
     
     %% x_2 corr y ortog x
-    rho_x2_y_ort_x=corrcoef(x_2_power(curr_step,:),y_ort_x_power(curr_step,:));
-    rho_all_x2_y_ort_x(curr_step)=rho_x2_y_ort_x(1,2);
+    rho_all_x2_y_ort_x(curr_step)=corr(x_2_power(curr_step,:)',y_ort_x_power(curr_step,:)');
 
     curr_step=curr_step+1;
 end
