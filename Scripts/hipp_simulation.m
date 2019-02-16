@@ -12,14 +12,18 @@ close all
 % param
 
 signal_len=1e3;
-for B=10 % Rayleigh parameter (equal to the std of the two original gauss distributions)
+for B=1 % Rayleigh parameter (equal to the std of the two original gauss distributions)
 
 %%
 % x = raylrnd(B,1,signal_len) +1i*raylrnd(B,1,signal_len);
 % x_2 = raylrnd(B+1,1,signal_len) +1i*raylrnd(B+1,1,signal_len);
-rng(1)
-x = raylrnd(B,1,signal_len).*exp(1i.*randn(1,signal_len));
-x_2 = raylrnd(B,1,signal_len).*exp(1i.*randn(1,signal_len));
+rng(4)
+ampiezza=raylrnd(B,1,signal_len);
+rng(4)
+p = raylcdf(ampiezza,B);
+ampiezza_remapped=1-p;
+x = ampiezza_remapped.*exp(1i.*randn(1,signal_len)*3);
+x_2 = p.*exp(1i.*randn(1,signal_len)*3);
 % x = raylrnd(B,1,signal_len).*exp(1i.*raylrnd(B,1,signal_len));
 % x_2 = raylrnd(B,1,signal_len).*exp(1i.*raylrnd(B,1,signal_len));
 rng(10)
@@ -39,19 +43,24 @@ fase_2=randn(1,signal_len)*10;
 
 %% histogram of x and x_2 amplitudes and phases
 figure
-h_x(1)=subplot(2,2,1);
-histogram(real(x))
+h_x(1)=subplot(2,3,1);
+histogram(abs(x))
 title('x amplitude')
-h_x(1)=subplot(2,2,2);
+h_x(1)=subplot(2,3,2);
 histogram(angle(x))
 title('x phase')
-h_x(1)=subplot(2,2,3);
-histogram(real(x_2))
+h_x(1)=subplot(2,3,3);
+histogram(real(x))
+title('x real')
+h_x(1)=subplot(2,3,4);
+histogram(abs(x_2))
 title('x2 amplitude')
-h_x(1)=subplot(2,2,4);
+h_x(1)=subplot(2,3,5);
 histogram(angle(x_2))
 title('x2 phase')
-
+h_x(1)=subplot(2,3,6);
+histogram(real(x_2))
+title('x2 real')
 %%
 range_coherence=0:.01:1;
 
@@ -142,8 +151,9 @@ plot(range_coherence,ort_hipp_no_atan)
 hold on
 plot(range_coherence,rho_all_plain,'k')
 axis square
-title('comparison rho (ort hipp) vs rho plain ')
+title(['rho (ort hipp) vs rho plain ' num2str(B)])
 end
+
 %% figure to compare the different correlations
 figure
 h_s(1)=subplot(1,4,1);
