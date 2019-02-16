@@ -86,12 +86,11 @@ for curr_c=range_coherence
     % signals
     %      y(curr_step,:) = (c.*x) + (sqrt((1 - c^2)).*x_2);
     if c<=0
-        y(curr_step,:) = ((c).*x_2) + ((sqrt(1-c^2)).*x_3);
+        y(curr_step,:) = ((c).*x_2) + (real((sqrt(1-c^2))).*x_3);
     else
-        y(curr_step,:) = (c.*x) + (sqrt(1-c^2).*x_3);% @c=-1 y=x_2(anticorr with x) @ c=0 y=un segnale che non centra un cazzo
+        y(curr_step,:) = (c.*x) + (real(sqrt(1-c^2)).*x_3);% @c=-1 y=x_2(anticorr with x) @ c=0 y=an uncorrelated signal
         % @c=1 y=x(anticorr with x_2)
     end
-%     y(curr_step,:) = (c.*real(x)+1i.*imag(x)) + (sqrt((1 - c^2)).*real(x_2)+1i.*(imag(x_2)));
     % power
     x_power(curr_step,:)=abs(x).^2;
     x_2_power(curr_step,:)=abs(x_2).^2;
@@ -104,7 +103,7 @@ for curr_c=range_coherence
     rho_plain=corrcoef(x_power(curr_step,:),y_power(curr_step,:));
     rho_all_plain(curr_step)=rho_plain(1,2);
 
-    %% orthogonalization
+    %% orthogonalization x-y 
     y_ort_x(curr_step,:)=y(curr_step,:)-real(x.*conj(y(curr_step,:))./(abs(x).^2)).*x; %from hipp
     x_ort_y(curr_step,:)=x-real(y(curr_step,:).*conj(x)./(abs(y(curr_step,:)).^2)).*y(curr_step,:); %from hipp
     
@@ -113,6 +112,21 @@ for curr_c=range_coherence
     
     y_ort_x_power(curr_step,:)=log10(y_ort_x_power(curr_step,:));
     x_ort_y_power(curr_step,:)=log10(x_ort_y_power(curr_step,:));
+    
+    %% orthogonalization x2-y 
+    y_ort_x2(curr_step,:)=y(curr_step,:)-real(x_2.*conj(y(curr_step,:))./(abs(x_2).^2)).*x_2; %from hipp
+    x2_ort_y(curr_step,:)=x_2-real(y(curr_step,:).*conj(x_2)./(abs(y(curr_step,:)).^2)).*y(curr_step,:); %from hipp
+    
+    y_ort_x2_power(curr_step,:)=abs(y_ort_x2(curr_step,:)).^2;
+    x2_ort_y_power(curr_step,:)=abs(x2_ort_y(curr_step,:)).^2;
+    
+    y_ort_x2_power(curr_step,:)=log10(y_ort_x2_power(curr_step,:));
+    x2_ort_y_power(curr_step,:)=log10(x2_ort_y_power(curr_step,:));
+    
+    rho_x2_y_ort_x2=corrcoef(y_ort_x2_power(curr_step,:),x_2_power(curr_step,:));
+    rho_all_x2_y_ort_x2(curr_step)=rho_x2_y_ort_x2(1,2);
+    rho_y_x2_ort_y=corrcoef(x2_ort_y_power(curr_step,:),y_power(curr_step,:));
+    rho_all_y_x2_ort_y(curr_step)=rho_y_x2_ort_y(1,2);
     %% orthog corr ortog
     rho_ort=corrcoef(x_ort_y_power(curr_step,:),y_ort_x_power(curr_step,:));
     rho_all_ort(curr_step)=rho_ort(1,2);
@@ -158,6 +172,10 @@ subplot(2,1,2)
 plot(rho_all_plain,ort_hipp_no_atan,'k')
 m=mean(diff(ort_hipp_no_atan(1:7))./diff(rho_all_plain(1:7)))
 title('rho all plain - rho ort hipp')
+ort_hipp_no_atan_x2=-((rho_all_y_x2_ort_y)./2+(rho_all_x2_y_ort_x2)./2);
+hold on
+plot(rho_all_plain,ort_hipp_no_atan_x2,'g')
+m_2=mean(diff(ort_hipp_no_atan_x2(14:21))./diff(rho_all_plain(14:21))')
 end
 
 %% figure to compare the different correlations
@@ -241,16 +259,16 @@ ylabel('probability')
 title(['y (' num2str(curr_step) ') phase histogram [deg]'])
 linkaxes(h_p,'xy')
 %% comparing signal abs at specific levels of coherence
-curr_step=1;
+curr_step=21;
 figure
 h(1)=subplot(2,1,1);
-plot(sqrt(x_power(curr_step,:)),'m')
+plot(sqrt(10.^(x_power(curr_step,:))),'m')
 hold on
 plot(real(x),'b')
 legend({'abs(x)','real(x)'},'interpreter','none')
 title('comparing x signal and abs')
 h(2)=subplot(2,1,2);
-plot(sqrt(y_power(curr_step,:)),'m')
+plot(sqrt(10.^real(y_power(curr_step,:))),'m')
 hold on
 plot(real(y(curr_step,:)),'r')
 legend({'abs(y)','real(y)'},'interpreter','none')
