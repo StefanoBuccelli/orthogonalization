@@ -5,7 +5,7 @@ close all
 
 signal_len=1e4; % samples
 
-for B=2 % Rayleigh parameter (equal to the std of the two original gauss distributions)
+for B=.2 % Rayleigh parameter (equal to the std of the two original gauss distributions)
 %%
 % x = raylrnd(B,1,signal_len) +1i*raylrnd(B,1,signal_len);
 % x_2 = raylrnd(B+1,1,signal_len) +1i*raylrnd(B+1,1,signal_len);
@@ -175,46 +175,79 @@ end
 
 %% figure to compare the different correlations
 figure
-h_s(1)=subplot(1,4,1);
+h_s(1)=subplot(2,4,1);
 plot(range_coherence,rho_all_plain,'k.')
 hold on
 plot(range_coherence,rho_all_ort,'m.')
-legend({'plain','ort ort'},'interpreter','none')
+legend({'plain','(x ort y , y ort x)'},'interpreter','none')
 xlabel('coherence')
 ylabel('correlation coeff')
 
-h_s(2)=subplot(1,4,2);
+h_s(2)=subplot(2,4,2);
 plot(range_coherence,rho_all_plain,'k.')
 hold on
 plot(range_coherence,rho_all_x_x_ort_y,'bo')
 plot(range_coherence,rho_all_x_y_ort_x,'b.')
-legend({'plain','x_x_ort_y','x_y_ort_x'},'interpreter','none')
+legend({'plain','(x , x_ort_y)','(x , y_ort_x)'},'interpreter','none')
 xlabel('coherence')
 ylabel('correlation coeff')
 
-h_s(3)=subplot(1,4,3);
+h_s(3)=subplot(2,4,3);
 plot(range_coherence,rho_all_plain,'k.')
 hold on
 plot(range_coherence,rho_all_x2_x_ort_y,'go')
 plot(range_coherence,rho_all_x2_y_ort_x,'g.')
-legend({'plain','x2_x_ort_y','x2_y_ort_x'},'interpreter','none')
+legend({'plain','(x2 , x_ort_y)','(x2 , y_ort_x)'},'interpreter','none')
 xlabel('coherence')
 ylabel('correlation coeff')
 
-h_s(4)=subplot(1,4,4);
+h_s(4)=subplot(2,4,4);
 plot(range_coherence,rho_all_plain,'k.')
 hold on
 plot(range_coherence,rho_all_y_x_ort_y,'ro')
 plot(range_coherence,rho_all_y_y_ort_x,'r.')
-legend({'plain','y_x_ort_y','y_y_ort_x'},'interpreter','none')
+legend({'plain','(y , x_ort_y)','(y , y_ort_x)'},'interpreter','none')
 xlabel('coherence')
+ylabel('correlation coeff')
+
+h_s(5)=subplot(2,4,5);
+plot(rho_all_plain,rho_all_plain,'k.')
+hold on
+plot(rho_all_plain,rho_all_ort,'m.')
+legend({'plain','(x ort y , y ort x)'},'interpreter','none')
+xlabel('correlation')
+ylabel('correlation coeff')
+
+h_s(6)=subplot(2,4,6);
+plot(rho_all_plain,rho_all_plain,'k.')
+hold on
+plot(rho_all_plain,rho_all_x_x_ort_y,'bo')
+plot(rho_all_plain,rho_all_x_y_ort_x,'b.')
+legend({'plain','(x , x_ort_y)','(x_, y_ort_x)'},'interpreter','none')
+xlabel('correlation')
+ylabel('correlation coeff')
+
+h_s(7)=subplot(2,4,7);
+plot(rho_all_plain,rho_all_plain,'k.')
+hold on
+plot(rho_all_plain,rho_all_x2_x_ort_y,'go')
+plot(rho_all_plain,rho_all_x2_y_ort_x,'g.')
+legend({'plain','(x2 , x_ort_y)','(x2 , y_ort_x)'},'interpreter','none')
+xlabel('correlation')
+ylabel('correlation coeff')
+
+h_s(8)=subplot(2,4,8);
+plot(rho_all_plain,rho_all_plain,'k.')
+hold on
+plot(rho_all_plain,rho_all_y_x_ort_y,'ro')
+plot(rho_all_plain,rho_all_y_y_ort_x,'r.')
+legend({'plain','(y , x_ort_y)','(y , y_ort_x)'},'interpreter','none')
+xlabel('correlation')
 ylabel('correlation coeff')
 
 linkaxes(h_s,'xy')
 xlim([-1.1 1.1])
 ylim([-1.1 1.1])
-xlabel('coherence')
-ylabel('correlation coeff')
 
 %% comparing phases
 x_phases=angle(x).*180/pi;
@@ -271,10 +304,12 @@ title(['comparing y signal and abs in curr step = ' num2str(curr_step)])
 linkaxes(h,'x')
 
 
-%% compass plot
+%% compass plot @ 10 different samples
 figure
-for curr_sample=1:10
-    subplot(2,5,curr_sample)
+samples=1:10;
+h_compass=zeros(1,length(samples));
+for curr_sample=samples
+    h_compass(curr_sample)=subplot(2,5,curr_sample);
     for curr_cohere_inx=1:1:length(range_coherence)
         compass(real(y(curr_cohere_inx,curr_sample)),imag(y(curr_cohere_inx,curr_sample)),'r')       
         hold on
@@ -285,3 +320,4 @@ for curr_sample=1:10
     compass(real(x_2(curr_sample)),imag(x_2(curr_sample)),'g')
     title(num2str(curr_sample))
 end
+linkaxes(h_compass,'xy')
