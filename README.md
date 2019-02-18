@@ -16,6 +16,7 @@ References:
 - Palva, Ghost interactions in MEG/EEG source space: A note of caution on inter-areal coupling measures. https://www.sciencedirect.com/science/article/pii/S1053811918301290?via%3Dihub 
 - Not sure about this: Marqui: Innovations orthogonalization: a solution to the major pitfalls of EEG/MEG “leakage correction” https://arxiv.org/ftp/arxiv/papers/1708/1708.05931.pdf
 - O’Neill,  Measuring electrophysiological connectivity by power envelope correlation: A technical review on MEG methods http://eprints.nottingham.ac.uk/31176/2/FC_in_MEG_accepted.pdf
+- Siems 2016, Measuring the cortical correlation structure of spontaneous oscillatory activity with EEG and MEG https://www.sciencedirect.com/science/article/pii/S1053811916000707#! 
 
 
 Github:
