@@ -100,10 +100,9 @@ for curr_c=range_coherence
     % signals
     %      y(curr_step,:) = (c.*x) + (sqrt((1 - c^2)).*x_2);
     if c<=0
-        y(curr_step,:) = ((c).*x_2) + (real((sqrt(1-c^2))).*x_3);
+        y(curr_step,:) = ((c).*x_2) + (sqrt(1-c^2).*x_3);% @c=-1 y=x_2(anticorr with x) @ c=0 y=an uncorrelated signal
     else
-        y(curr_step,:) = (c.*x) + (real(sqrt(1-c^2)).*x_3);% @c=-1 y=x_2(anticorr with x) @ c=0 y=an uncorrelated signal
-        % @c=1 y=x(anticorr with x_2)
+        y(curr_step,:) = (c.*x) + (sqrt(1-c^2).*x_3); % @c=1 y=x(anticorr with x_2)
     end
     % power
     x_power(curr_step,:)=abs(x).^2;
@@ -154,11 +153,18 @@ for curr_c=range_coherence
     y_ort_x2_power(curr_step,:)=log10(y_ort_x2_power(curr_step,:));
     x2_ort_y_power(curr_step,:)=log10(x2_ort_y_power(curr_step,:));
     
-    %% orthog x2-y
+    %% x2 , y ort x2
     rho_all_x2_y_ort_x2(curr_step)=corr(y_ort_x2_power(curr_step,:)',x_2_power(curr_step,:)');
-    
+    %% x2 , x2 ort y
+    rho_all_x2_x2_ort_y(curr_step)=corr(x2_ort_y_power(curr_step,:)',x_2_power(curr_step,:)');
+    %% y , x2 ort y
     rho_all_y_x2_ort_y(curr_step)=corr(x2_ort_y_power(curr_step,:)',y_power(curr_step,:)');
-    
+    %% y , y ort x2
+    rho_all_y_y_ort_x2(curr_step)=corr(y_ort_x2_power(curr_step,:)',y_power(curr_step,:)');
+    %% x , x2 ort y
+    rho_all_x_x2_ort_y(curr_step)=corr(x2_ort_y_power(curr_step,:)',x_power(curr_step,:)');
+    %% x , y ort x2
+    rho_all_x_y_ort_x2(curr_step)=corr(y_ort_x2_power(curr_step,:)',x_power(curr_step,:)');
     
     %% orthog corr ortog
     rho_all_ort(curr_step)=corr(x_ort_y_power(curr_step,:)',y_ort_x_power(curr_step,:)');
@@ -208,8 +214,9 @@ ylabel('corr orth')
 legend({'y - x','-(y -x2)'})
 ylim([-1 1])
 
-m=mean(diff(ort_hipp_x_y_no_atanh(1:9))./diff(rho_all_x_y_plain(1:9)))
-m_2=mean(diff(ort_hipp_x_x2_no_atanh(14:21))./diff(rho_all_x_y_plain(14:21))')
+% estimating the slope.. bad estimation until we'll get nice plots
+m=mean(diff(ort_hipp_x_y_no_atanh(1:end/2))./diff(rho_all_x_y_plain(1:end/2)))
+m_2=mean(diff(ort_hipp_x_x2_no_atanh(end/2:end))./diff(rho_all_x_y_plain(end/2:end))')
 
 
 %% figure to compare the different correlations
@@ -347,9 +354,15 @@ linkaxes(h,'x')
 figure
 samples=1:10;
 h_compass=zeros(1,length(samples));
+% reduce number of arrows 
+if length(range_coherence)>10
+    range_coherence_subplot=linspace(1,length(range_coherence),10);
+else
+    range_coherence_subplot=range_coherence;
+end
 for curr_sample=samples
     h_compass(curr_sample)=subplot(2,5,curr_sample);
-    for curr_cohere_inx=1:1:length(range_coherence)
+    for curr_cohere_inx=1:1:length(range_coherence_subplot)
         compass(real(y(curr_cohere_inx,curr_sample)),imag(y(curr_cohere_inx,curr_sample)),'r')
         hold on
         compass(real(y_ort_x(curr_cohere_inx,curr_sample)),imag(y_ort_x(curr_cohere_inx,curr_sample)),'k')
@@ -360,3 +373,86 @@ for curr_sample=samples
     title(num2str(curr_sample))
 end
 linkaxes(h_compass,'xy')
+
+
+%% comparing cross correlations in a different way
+figure
+h_s2(1)=subplot(2,4,[1 5]);
+plot(rho_all_x_y_plain,rho_all_x_y_plain,'k.')
+hold on
+plot(rho_all_x_y_plain,rho_all_ort,'m.')
+legend({'plain','(x ort y , y ort x)'},'interpreter','none')
+xlabel('correlation')
+ylabel('correlation coeff')
+
+h_s2(2)=subplot(2,4,2);
+plot(rho_all_x_y_plain,rho_all_x_y_plain,'k.')
+hold on
+plot(rho_all_x_y_plain,rho_all_x_x_ort_y,'bo')
+plot(rho_all_x_y_plain,rho_all_x_y_ort_x,'b.')
+legend({'plain','(x , x_ort_y)','(x_, y_ort_x)'},'interpreter','none')
+xlabel('correlation')
+ylabel('correlation coeff')
+
+h_s2(3)=subplot(2,4,3);
+plot(rho_all_x_y_plain,rho_all_x_y_plain,'k.')
+hold on
+plot(rho_all_x_y_plain,rho_all_x2_x_ort_y,'go')
+plot(rho_all_x_y_plain,rho_all_x2_y_ort_x,'g.')
+legend({'plain','(x2 , x_ort_y)','(x2 , y_ort_x)'},'interpreter','none')
+xlabel('correlation')
+ylabel('correlation coeff')
+
+h_s2(4)=subplot(2,4,4);
+plot(rho_all_x_y_plain,rho_all_x_y_plain,'k.')
+hold on
+plot(rho_all_x_y_plain,rho_all_y_x_ort_y,'ro')
+plot(rho_all_x_y_plain,rho_all_y_y_ort_x,'r.')
+legend({'plain','(y , x_ort_y)','(y , y_ort_x)'},'interpreter','none')
+xlabel('correlation')
+ylabel('correlation coeff')
+
+h_s2(6)=subplot(2,4,6);
+plot(rho_all_x_y_plain,rho_all_x_x2_ort_y,'bo')
+hold on
+plot(rho_all_x_y_plain,rho_all_x_y_ort_x2,'b.')
+plot(rho_all_x_y_plain,rho_all_x_y_plain,'k.')
+legend({'(x , x2 ort y)','(x , y ort x2)'},'interpreter','none')
+xlabel('correlation')
+ylabel('correlation coeff')
+
+h_s2(7)=subplot(2,4,7);
+plot(rho_all_x_y_plain,rho_all_x2_y_ort_x2,'go')
+hold on
+plot(rho_all_x_y_plain,rho_all_x2_x2_ort_y,'g.')
+plot(rho_all_x_y_plain,rho_all_x_y_plain,'k.')
+legend({'(x2 , y ort x_2)','(x2 , x_2 ort y)'},'interpreter','none')
+xlabel('correlation')
+ylabel('correlation coeff')
+
+h_s2(8)=subplot(2,4,8);
+plot(rho_all_x_y_plain,rho_all_y_x2_ort_y,'ro')
+hold on
+plot(rho_all_x_y_plain,rho_all_y_y_ort_x2,'r.')
+plot(rho_all_x_y_plain,rho_all_x_y_plain,'k.')
+legend({'(y , x2 ort y)','(y , y ort x2)'},'interpreter','none')
+xlabel('correlation')
+ylabel('correlation coeff')
+
+
+
+linkaxes(h_s2,'xy')
+xlim([-1.1 1.1])
+ylim([-1.1 1.1])
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
