@@ -13,6 +13,7 @@ References:
 - Colclough 2015: A symmetric multivariate leakage correction for MEG connectomes https://www.sciencedirect.com/science/article/pii/S1053811915002670?via%3Dihub#f0015 to check also supplementary figures and github repos.
 - Omidvarnia, Amir, et al. "Measuring time-varying information flow in scalp EEG signals: orthogonalized partial directed coherence." IEEE transactions on biomedical engineering 61.3 (2014): 680-693. 
 - Colclough 2016, How reliable are MEG resting-state connectivity metrics? https://www.sciencedirect.com/science/article/pii/S1053811916301914#f0005 Comparison of the repeatability of 12 common network estimation methods 
+- Palva, Ghost interactions in MEG/EEG source space: A note of caution on inter-areal coupling measures. https://www.sciencedirect.com/science/article/pii/S1053811918301290?via%3Dihub 
 
 Github:
 - Here you can find different repositories: https://github.com/OHBA-analysis, such as HMM-MAR that deals, among the other things with orthogonalization. Under examples/, there are scripts demonstrating the analysis conducted for the papers: 
