@@ -4,6 +4,7 @@ The goal of this small repository is to understand the concept of orthogonalizat
 In scripts:
 - hipp_simulation.m is a single script that creates synthetic signals, performs orthogonalization and all the steps needed to reach the goal (not yet fully achieved)
 - orthogonalization.m, simply shows in polar coordinates 2 samples from 2 complex signals (that was the starting point)
+- understanding_Rayleigh.m I used the definition of Rayleigh from wikipedia and compared with matlab;
 
 References:
 - Hipp, Joerg F., et al. "Large-scale cortical correlation structure of spontaneous oscillatory activity." Nature neuroscience 15.6 (2012): 884. Paper: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3861400/ , supplementary: https://media.nature.com/original/nature-assets/neuro/journal/v15/n6/extref/nn.3101-S1.pdf
