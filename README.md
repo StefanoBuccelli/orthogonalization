@@ -1,15 +1,12 @@
 # orthogonalization
-understanding orthogonalization (starting from Hipp et. al 2012)
+The goal of this small repository is to understand the concept of orthogonalization of power envelopes. To do that, I tried to replicate results from supplementary figure 4, panel e of the paper: Large-scale cortical correlation structure of spontaneous oscillatory activity by Hipp et al. 2012   
 
 In scripts:
-- orthogonalization shows in polar coordinates 2 samples from 2 complex signals (the equivalent of a synthetic spectra)
-- hipp_simulation shows different plots with aim (not yet reached) to replicate results from supplementary material of hipp.  
-
+- hipp_simulation.m is a single script that creates synthetic signals, performs orthogonalization and all the steps needed to reach the goal (not yet fully achieved)
+- orthogonalization.m, simply shows in polar coordinates 2 samples from 2 complex signals (that was the starting point)
 
 References:
-
-
-- hipp 2012: Paper: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3861400/ , supplementary: https://media.nature.com/original/nature-assets/neuro/journal/v15/n6/extref/nn.3101-S1.pdf
+- Hipp, Joerg F., et al. "Large-scale cortical correlation structure of spontaneous oscillatory activity." Nature neuroscience 15.6 (2012): 884. Paper: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3861400/ , supplementary: https://media.nature.com/original/nature-assets/neuro/journal/v15/n6/extref/nn.3101-S1.pdf
 - Colclough 2015: A symmetric multivariate leakage correction for MEG connectomes https://www.sciencedirect.com/science/article/pii/S1053811915002670?via%3Dihub#f0015 to check also supplementary figures and github repos.
 - Omidvarnia, Amir, et al. "Measuring time-varying information flow in scalp EEG signals: orthogonalized partial directed coherence." IEEE transactions on biomedical engineering 61.3 (2014): 680-693. 
 - Colclough 2016, How reliable are MEG resting-state connectivity metrics? https://www.sciencedirect.com/science/article/pii/S1053811916301914#f0005 Comparison of the repeatability of 12 common network estimation methods 
