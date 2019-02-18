@@ -1,5 +1,5 @@
 # orthogonalization
-The goal of this small repository is to understand the concept of orthogonalization of power envelopes. To do that, I tried to replicate results from supplementary figure 4, panel e of the paper: Large-scale cortical correlation structure of spontaneous oscillatory activity by Hipp et al. 2012   
+The goal of this small repository is to understand the concept of orthogonalization of power envelopes. To do that, I tried to replicate results from supplementary figure 2, panel e of the paper: Large-scale cortical correlation structure of spontaneous oscillatory activity by Hipp et al. 2012   
 
 In scripts:
 - hipp_simulation.m is a single script that creates synthetic signals, performs orthogonalization and all the steps needed to reach the goal (not yet fully achieved)
