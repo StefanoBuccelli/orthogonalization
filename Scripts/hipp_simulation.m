@@ -349,6 +349,7 @@ if length(range_coherence)>10
 else
     range_coherence_subplot=range_coherence;
 end
+%%
 for curr_sample=samples
     %     h_compass(curr_sample)=subplot(2,5,curr_sample);
     figure
@@ -360,6 +361,7 @@ for curr_sample=samples
     end
     compass(real(x(curr_sample)),imag(x(curr_sample)),'b')
     compass(real(x_2(curr_sample)),imag(x_2(curr_sample)),'g')
+    compass(real(x_3(curr_sample)),imag(x_3(curr_sample)),'y')
     title(num2str(curr_sample))
     savefig(gcf,['compass_sample_' num2str(curr_sample)])
     saveas(gcf,['compass_sample_' num2str(curr_sample)],'tif')
