@@ -1,5 +1,5 @@
 # orthogonalization
-The goal of this small repository is to understand the concept of orthogonalization of power envelopes. To do that, I tried to replicate results from supplementary figure 2, panel e of the paper: Large-scale cortical correlation structure of spontaneous oscillatory activity by Hipp et al. 2012   
+The goal of this small repository is to understand the concept of orthogonalization of power envelopes. To do that, I tried to replicate results from supplementary figure 2, panels "e" and "f" of the paper: Large-scale cortical correlation structure of spontaneous oscillatory activity by Hipp et al. 2012   
 
 Slides to explain results (work in progress): https://docs.google.com/presentation/d/1eXcSeaBakwt9XWHzp2J4sScpUm2wbJgSt8Z3qiOLgGg/edit?usp=sharing 
 
