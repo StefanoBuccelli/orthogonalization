@@ -13,7 +13,7 @@ References:
 - Colclough 2015: A symmetric multivariate leakage correction for MEG connectomes https://www.sciencedirect.com/science/article/pii/S1053811915002670?via%3Dihub#f0015 to check also supplementary figures and github repos.
 - Omidvarnia, Amir, et al. "Measuring time-varying information flow in scalp EEG signals: orthogonalized partial directed coherence." IEEE transactions on biomedical engineering 61.3 (2014): 680-693. 
 - Colclough 2016, How reliable are MEG resting-state connectivity metrics? https://www.sciencedirect.com/science/article/pii/S1053811916301914#f0005 Comparison of the repeatability of 12 common network estimation methods 
-- Palva, Ghost interactions in MEG/EEG source space: A note of caution on inter-areal coupling measures. https://www.sciencedirect.com/science/article/pii/S1053811918301290?via%3Dihub 
+- Palva, 2018 Ghost interactions in MEG/EEG source space: A note of caution on inter-areal coupling measures. https://www.sciencedirect.com/science/article/pii/S1053811918301290?via%3Dihub 
 - Not sure about this: Marqui: Innovations orthogonalization: a solution to the major pitfalls of EEG/MEG “leakage correction” https://arxiv.org/ftp/arxiv/papers/1708/1708.05931.pdf
 - O’Neill,  Measuring electrophysiological connectivity by power envelope correlation: A technical review on MEG methods http://eprints.nottingham.ac.uk/31176/2/FC_in_MEG_accepted.pdf
 - Siems 2016, Measuring the cortical correlation structure of spontaneous oscillatory activity with EEG and MEG https://www.sciencedirect.com/science/article/pii/S1053811916000707#! 
